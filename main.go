@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"net/http"
+	"os"
 	"server/src/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +17,12 @@ import (
 var public embed.FS
 
 func main() {
-	db, err := gorm.Open(sqlite.Open("sqlite.db"))
+	dbFileName := os.Getenv("DB_FILE_NAME")
+	if dbFileName == "" {
+		dbFileName = "sqlite.db"
+	}
+
+	db, err := gorm.Open(sqlite.Open(dbFileName))
 	if err != nil {
 		panic(err)
 	}
@@ -60,5 +66,5 @@ func main() {
 		})
 	})
 
-	app.Listen(":3000")
+	app.Listen(":8080")
 }
