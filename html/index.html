@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Golang simple server sample</title>
+  </head>
+  <body>
+    <input type="text" id="task" />
+    <button type="button" id="add">Add</button>
+
+    <ul>
+      {{range .tasks}}
+      <li>
+        [{{.CreatedAt.Format "2006.01.01 15:04:05"}}] {{.Title}}
+        <button type="button" id="delete{{.ID}}">Delete</button>
+      </li>
+      {{end}}
+    </ul>
+  </body>
+
+  <script>
+    document.getElementById("add").addEventListener("click", function () {
+      const task = document.getElementById("task").value;
+
+      fetch("/api/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: task }),
+      }).then(function (response) {
+        if (response.status < 300) {
+          window.location.reload();
+        }
+      });
+    });
+
+    // {{range .tasks}}
+    document
+      .getElementById("delete{{.ID}}")
+      .addEventListener("click", function () {
+        fetch("/api/tasks/{{.ID}}", { method: "DELETE" }).then(function (
+          response
+        ) {
+          if (response.status < 300) {
+            window.location.reload();
+          }
+        });
+      });
+    // {{end}}
+  </script>
+</html>
